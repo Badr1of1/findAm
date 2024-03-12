@@ -5,7 +5,7 @@ require("dotenv").config();
 const lost = require("./routes/Items");
 
 app.use(express.json());
-app.use("/api/v1/lost", lost);
+app.use("/api/v1", lost);
 
 port = process.env.PORT || 5000;
 const start = async () => {

@@ -1,14 +1,12 @@
 const mongoose = require("mongoose");
-
 const Schema = mongoose.Schema;
-const SignUpSchema = new Schema({
-  firstname: {
+
+const userSchema = new Schema({
+  name: {
     type: String,
     required: true,
   },
-  lastname: {
-    type: String,
-  },
+
   email: {
     type: String,
     required: true,
@@ -16,20 +14,18 @@ const SignUpSchema = new Schema({
       unique: true,
     },
   },
-  number: {
-    type: Number,
-    required: true,
-  },
+
   password: {
     type: String,
     required: true,
   },
-  date: {
+
+  createdAt: {
     type: Date,
     default: Date.now,
   },
 });
 
-const SignUp = mongoose.model("SignUp", SignUpSchema);
+const User = mongoose.model("User", userSchema);
 
-module.exports = SignUp;
+module.exports = User;

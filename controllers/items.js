@@ -1,14 +1,14 @@
 const Item = require("../models/Item");
 
 const reportLostItem = async (req, res) => {
-  const { description, location, contactInfo } = req.body;
+  const { description, location, contactInfo, status } = req.body;
 
   try {
     const newItem = await Item.create({
       description,
       location,
       contactInfo,
-      isLost: true,
+      status,
     });
 
     res.status(201).json({ newItem });
