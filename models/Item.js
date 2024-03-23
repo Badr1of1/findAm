@@ -25,6 +25,14 @@ const itemSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  photo: {
+    type: String,
+    required: true,
+  },
+  // photo: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "Photo",
+  // },
   location: {
     type: String,
     required: true,

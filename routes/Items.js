@@ -1,8 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { findItems, reportLostItem } = require("../controllers/items");
+const { postItem, uploadPhoto } = require("../controllers/items");
+const upload = require('../middlewares/upload')
 
-router.route("/report-lost-item").post(reportLostItem);
-router.route("/find-items").get(findItems);
+
+// Route for posting an item with file upload
+router.post("/post-item", upload.single('photo'), postItem);
+
+
+// router.route("/update-item").put(updateItem);
+// router.route("/delete-item").delete(deleteItem);
+
 
 module.exports = router;
