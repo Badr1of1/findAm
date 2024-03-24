@@ -29,6 +29,7 @@ const postItem = async (req, res) => {
   }
 };
 
+//! controller for updating an item with file upload
 const updateItem = async (req, res) => {
   const { id: itemID } = req.params;
   const { description, location, contactInfo, status } = req.body;
@@ -50,7 +51,7 @@ const updateItem = async (req, res) => {
       new: true,
       runValidators: true,
     });
-    
+
     if (!item) {
       return res.status(404).json({ error: "Item not found" });
     }
@@ -65,49 +66,25 @@ const updateItem = async (req, res) => {
   }
 };
 
-// const updateItem = async (req, res) => {
-//   const { id: itemID } = req.params;
-//   const { description, location, contactInfo, status } = req.body;
-//   let updateFields = {
-//     description,
-//     location,
-//     contactInfo,
-//     status,
-//     updatedAt: Date.now(),
-//   };
+//! controller for deleting an item
+const deleteItem = async (req, res) => {
+  const { id: itemID } = req.params;
 
-//   // Check if photo is included in the request
-//   if (req.file) {
-//     // If a new photo is uploaded, update the photo field
-//     updateFields.photo = req.file.path;
-//   }
+  try {
+    const item = await Item.findByIdAndDelete(itemID);
 
-//   try {
-//     // Find the item by ID
-//     const item = await Item.findById(itemID);
+    if (!item) {
+      return res.status(404).json({ error: "Item not found" });
+    }
 
-//     // Check if item is not found
-//     if (!item) {
-//       return res.status(404).json({ error: "Item not found" });
-//     }
+    fs.unlinkSync(item.photo); // Delete the photo file from the uploads folder
+    res.status(200).json({ message: "Item deleted successfully" });
+  }
+  catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to delete item. Please try again." });
+  }
+};
 
-//     // Delete the old photo from the uploads folder if it exists
-//     if (req.file.originalname && item.photo.originalname) {
-//       fs.unlinkSync(item.photo.originalname); // Delete the old photo file
-//     }
 
-//     // Update the item fields in the database
-//     const updatedItem = await Item.findByIdAndUpdate(itemID, updateFields, {
-//       new: true, // Return the updated item
-//       runValidators: true, // Run validation checks on the updated fields
-//     });
-
-//     // Send the updated item in the response
-//     res.status(200).json({ updatedItem });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Failed to update item. Please try again." });
-//   }
-// };
-
-module.exports = { postItem, updateItem };
+module.exports = { postItem, updateItem, deleteItem};
