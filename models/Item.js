@@ -29,15 +29,16 @@ const itemSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  // photo: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "Photo",
-  // },
+
   location: {
     type: String,
     required: true,
   },
   createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
     type: Date,
     default: Date.now,
   },
