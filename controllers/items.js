@@ -40,7 +40,6 @@ const updateItem = async (req, res) => {
     status,
     updatedAt: Date.now(),
   };
-
   // Check if photo is included in the request
   if (req.file) {
     updateFields.photo = req.file.path;
@@ -55,7 +54,6 @@ const updateItem = async (req, res) => {
     if (!item) {
       return res.status(404).json({ error: "Item not found" });
     }
-
     res.status(200).json({ item });
   } catch (error) {
     if (req.file) {
@@ -79,12 +77,39 @@ const deleteItem = async (req, res) => {
 
     fs.unlinkSync(item.photo); // Delete the photo file from the uploads folder
     res.status(200).json({ message: "Item deleted successfully" });
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to delete item. Please try again." });
   }
 };
 
+const listItems = async (req, res) => {
+  try {
+    const items = await Item.find({});
+    res.status(200).json({ items, nbHits: items.length });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Failed to retrieve items. Please try again." });
+  }
+};
 
-module.exports = { postItem, updateItem, deleteItem};
+const singleItem = async (req, res) => {
+  const { id: itemID } = req.params;
+
+  try {
+    const item = await Item.findById(itemID); // Find item by ID    
+    if (!item) {
+      return res.status(404).json({ error: "Item not found" });
+    }
+    res.status(200).json({ item });
+  }
+  catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to retrieve item. Please try again." });
+  }
+}
+
+
+
+module.exports = { postItem, updateItem, deleteItem, listItems, singleItem };

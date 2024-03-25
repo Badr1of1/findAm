@@ -5,7 +5,7 @@ require("dotenv").config();
 const itemRoute = require("./routes/Items");
 
 app.use(express.json());
-app.use("/api/v1/item", itemRoute);
+app.use("/api/v1/items", itemRoute);
 
 port = process.env.PORT || 5000;
 const start = async () => {
