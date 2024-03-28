@@ -94,22 +94,28 @@ const listItems = async (req, res) => {
   }
 };
 
+//! controller for retrieving a single item
 const singleItem = async (req, res) => {
   const { id: itemID } = req.params;
 
   try {
-    const item = await Item.findById(itemID); // Find item by ID    
+    const item = await Item.findById(itemID); // Find item by ID
     if (!item) {
       return res.status(404).json({ error: "Item not found" });
     }
     res.status(200).json({ item });
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Failed to retrieve item. Please try again." });
+    res
+      .status(500)
+      .json({ error: "Failed to retrieve item. Please try again." });
   }
-}
+};
 
-
-
-module.exports = { postItem, updateItem, deleteItem, listItems, singleItem };
+module.exports = {
+  postItem,
+  updateItem,
+  deleteItem,
+  listItems,
+  singleItem,
+};
