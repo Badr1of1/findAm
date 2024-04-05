@@ -2,15 +2,16 @@ const express = require("express");
 const app = express();
 const connectDB = require("./db/connect");
 const notFoundMw = require("./middlewares/notFound");
-const errHandlerMw = require("./middlewares/errorHandler");
+// const errHandlerMw = require("./middlewares/errorHandler");
 require("dotenv").config();
 const itemRoute = require("./routes/Items");
 const authRoute = require("./routes/user");
 
+app.use(express.static("./public"))
 app.use(express.json());
 app.use("/api/v1", itemRoute, authRoute);
 
-app.use(errHandlerMw);
+// app.use(errHandlerMw);
 app.use(notFoundMw);
 
 port = process.env.PORT || 5000;
