@@ -83,6 +83,7 @@ const deleteItem = async (req, res) => {
   }
 };
 
+//! Retrieve a list of all items (lost and found)
 const listItems = async (req, res) => {
   try {
     const items = await Item.find({});
@@ -111,6 +112,7 @@ const singleItem = async (req, res) => {
       .json({ error: "Failed to retrieve item. Please try again." });
   }
 };
+
 
 module.exports = {
   postItem,

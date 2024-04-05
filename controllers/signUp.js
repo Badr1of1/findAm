@@ -5,7 +5,9 @@ const signUp = async (req, res) => {
   try {
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
-     return res.status(400).json({msg:"Please fill out the necessary fields"})
+      return res
+        .status(400)
+        .json({ msg: "Please fill out the necessary fields" });
     }
 
     const existingUsername = await User.findOne({ username });
@@ -19,7 +21,11 @@ const signUp = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ username, email, password: hashedPassword });
+    const newUser = await User.create({
+      username,
+      email,
+      password: hashedPassword,
+    });
     res.status(201).json({ msg: "User created successfully", newUser });
   } catch (error) {
     console.error(error);
