@@ -7,7 +7,16 @@ const {
   listItems,
   singleItem,
 } = require("../controllers/items");
+
+// const {
+//   authItems,
+//   authSingleItem,
+//   authDelitem,
+//   authUpdate,
+// } = require("../controllers/auth/items");
+
 const upload = require("../middlewares/upload");
+// const authenticateUser = require("../middlewares/auth");
 
 // Route for posting an item with file upload
 router.route("/items").post(upload.single("photo"), postItem).get(listItems);
@@ -19,14 +28,8 @@ router
   .delete(deleteItem)
   .get(singleItem);
 
-///// todo: GET /items: Retrieve a list of all items (lost and found).
-/////todo: GET /items/:id: Retrieve details of a specific item by its ID.
-/////todo: POST /items: Create a new item (report lost/found).
-/////todo: PUT /items/:id: Update an existing item (e.g., update description, location, contact info, status, or photo).
-/////todo: DELETE /items/:id: Delete an existing item by its ID.
-//todo: GET /user/items: Retrieve a list of items posted by the authenticated user.
-//todo GET /user/items/:id: Retrieve details of a specific item posted by the authenticated user.
-//todo: PUT /user/items/:id: Update an item posted by the authenticated user.
-//todo: DELETE /user/items/:id: Delete an item posted by the authenticated user.
+// router.route("/user/items").get(authenticateUser, authItems);
+
+// router.route("/user/items:id").get(authenticateUser, authSingleItem).delete(authenticateUser, authDelitem).patch(authenticateUser, authUpdate);
 
 module.exports = router;

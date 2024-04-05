@@ -1,16 +1,23 @@
 const express = require("express");
-const router = express.Router()
+const router = express.Router();
 
-const {signUp} = require("../controllers/user");
+const {
+    authItems,
+    authSingleItem,
+    authDelitem,
+    authUpdate,
+  } = require("../controllers/auth/items");
+const authenticateUser = require("../middlewares/auth");
 
-router.route("/signup").post(signUp)
 
+const { login } = require("../controllers/auth/user");
+const { signUp } = require("../controllers/signUp");
 
-module.exports = router
+router.route("/signup").post(signUp);
+router.route("/login").post(login);
 
+router.route("/user/items").get(authenticateUser, authItems);
 
+router.route("/user/items:id").get(authenticateUser, authSingleItem).delete(authenticateUser, authDelitem).patch(authenticateUser, authUpdate);
 
-/////todo: POST /signup: Create a new user account.
-//todo: POST /login: Authenticate a user and generate a token.
-//todo: GET /user/profile: Retrieve the profile of the authenticated user.
-//todo: PUT /user/profile: Update the profile of the authenticated user.
+module.exports = router;
