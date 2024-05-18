@@ -19,8 +19,8 @@ const authenticateUser = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    if (error.name === 'JsonWebTokenError') {
-      return res.status(401).json({ msg: "Unauthorized: Invalid token" });
+    if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+      return res.status(401).json({ msg: `Unauthorized: ${error.message}` });
     } else {
       return res.status(500).json({ msg: "Internal server error" });
     }
