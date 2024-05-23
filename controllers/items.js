@@ -25,7 +25,7 @@ const postItem = async (req, res) => {
     res.status(201).json(newItem);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Failed to create item" });
+    res.status(500).json({ error: `Failed to create item ${error.message}` });
   }
 };
 
@@ -112,7 +112,6 @@ const singleItem = async (req, res) => {
       .json({ error: "Failed to retrieve item. Please try again." });
   }
 };
-
 
 module.exports = {
   postItem,

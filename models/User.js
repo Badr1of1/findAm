@@ -26,28 +26,6 @@ const userSchema = new Schema({
   },
 });
 
-const commentSchema = new Schema({
-  postID: {
-    type: Schema.Types.ObjectId,
-    ref: "Item",
-    required: true,
-  },
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  content: {
-    type: String,
-    required: true,
-  },
-  createdAt:{
-    type:Date,
-    default:Date.now
-  }
-});
-
-const Comment = mongoose.model("Comment", commentSchema);
 const User = mongoose.model("User", userSchema);
 
-module.exports = { User, Comment };
+module.exports = User;

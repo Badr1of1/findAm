@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 const itemSchema = new mongoose.Schema({
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   description: {
     type: String,
     required: true,
@@ -9,7 +14,6 @@ const itemSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-
   location: {
     type: String,
     required: true,
@@ -31,7 +35,7 @@ const itemSchema = new mongoose.Schema({
     enum: ["lost", "found"],
     required: true,
   },
-  comments: [
+  comment: [
     {
       type: Schema.Types.ObjectId,
       ref: "Comment",
