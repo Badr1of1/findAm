@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const itemSchema = new mongoose.Schema({
+const itemSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
+    required: true,
   },
   description: {
     type: String,
@@ -18,14 +19,6 @@ const itemSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
   contactInfo: {
     type: String,
     required: true,
@@ -35,12 +28,20 @@ const itemSchema = new mongoose.Schema({
     enum: ["lost", "found"],
     required: true,
   },
-  comment: [
+  comments: [
     {
       type: Schema.Types.ObjectId,
       ref: "Comment",
     },
   ],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const Item = mongoose.model("Item", itemSchema);

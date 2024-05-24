@@ -6,34 +6,28 @@ const login = async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    // Check if the user exists
     const user = await User.findOne({ username });
 
     if (!user) {
       return res.status(401).json({ message: "Invalid username" });
     }
 
-    // Check if the password is correct
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Incorrect password" });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       { id: user._id, username: user.username },
       process.env.JWT_SECRET,
-      {
-        expiresIn: "30d", // Token expires in 30 days
-      }
+      { expiresIn: "30d" }
     );
 
-    // Set the JWT token as a cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Only send cookie over HTTPS in production
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days expiration
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
     res
@@ -46,20 +40,22 @@ const login = async (req, res) => {
 };
 
 const signUp = async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
-    if (!username || !email || !password) {
-      return res
-        .status(400)
-        .json({ msg: "Please fill out the necessary fields" });
-    }
+  const { username, email, password } = req.body;
 
+  if (!username || !email || !password) {
+    return res
+      .status(400)
+      .json({ msg: "Please fill out the necessary fields" });
+  }
+
+  try {
     const existingUsername = await User.findOne({ username });
     const existingEmail = await User.findOne({ email });
 
     if (existingUsername) {
       return res.status(400).json({ msg: "Username already exists" });
     }
+
     if (existingEmail) {
       return res.status(400).json({ msg: "Email already exists" });
     }
@@ -70,6 +66,7 @@ const signUp = async (req, res) => {
       email,
       password: hashedPassword,
     });
+
     res.status(201).json({ msg: "User created successfully", newUser });
   } catch (error) {
     console.error(error);
@@ -77,15 +74,15 @@ const signUp = async (req, res) => {
   }
 };
 
-//!  Retrieve the profile of the authenticated user.
 const getProfile = async (req, res) => {
   try {
-    const userID = req.user._id;
-    const userProfile = User.findById({ userID });
-    if (!userProfile) {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }
-    res.status(2001).json({ userProfile });
+
+    res.status(200).json({ user });
   } catch (error) {
     res
       .status(500)
