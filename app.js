@@ -5,12 +5,12 @@ const notFoundMw = require("./middlewares/notFound");
 // const errHandlerMw = require("./middlewares/errorHandler");
 require("dotenv").config();
 const itemRoute = require("./routes/Items");
-const authRoute = require("./routes/user");
+const userRoute = require("./routes/user");
 const commentRoute = require("./routes/Comment");
 
 app.use(express.static("./public"));
 app.use(express.json());
-app.use("/api/v1", itemRoute, authRoute, commentRoute);
+app.use("/api/v1", itemRoute, userRoute, commentRoute);
 
 // app.use(errHandlerMw);
 app.use(notFoundMw);
