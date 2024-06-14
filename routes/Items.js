@@ -10,12 +10,11 @@ const {
 } = require("../controllers/items");
 const { authenticateUser } = require("../middlewares/auth");
 
-// Route for posting an item with file upload,
-// and retrieving them
+// endpoint for retrieving all items, and posting an item
 router
   .route("/items")
-  .post(authenticateUser, upload.single("photo"), postItem)
-  .get(authenticateUser, listItems);
+  .get(authenticateUser, listItems)
+  .post(authenticateUser, upload.single("photo"), postItem);
 
 // get a single item, update an item, delete an item
 router
