@@ -81,11 +81,23 @@ const deleteItem = async (req, res) => {
 const listItems = async (req, res) => {
   try {
     const items = await Item.find({});
-    res.status(200).json({ items, nbHits: items.length });
+    const itemsWithUrls = items.map(item => ({
+      ...item._doc,
+      photoUrl: `${req.protocol}://${req.get('host')}/${item.photo}`
+    }));
+    res.status(200).json({ items: itemsWithUrls, nbHits: items.length });
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Failed to retrieve items. Please try again." });
+    res.status(500).json({ error: "Failed to retrieve items. Please try again." });
+  }
+};
+
+const getUserItems = async (req, res) => {
+  try {
+    const items = await Item.find({ user: req.user.username });
+    res.status(200).json({ items });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve user items. Please try again.' });
   }
 };
 
@@ -108,10 +120,12 @@ const singleItem = async (req, res) => {
   }
 };
 
+
 module.exports = {
   postItem,
   updateItem,
   deleteItem,
   listItems,
   singleItem,
+  getUserItems,
 };

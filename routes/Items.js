@@ -7,13 +7,14 @@ const {
   deleteItem,
   listItems,
   singleItem,
+  getUserItems,
 } = require("../controllers/items");
 const { authenticateUser } = require("../middlewares/auth");
 
 // endpoint for retrieving all items, and posting an item
 router
   .route("/items")
-  .get(authenticateUser, listItems)
+  .get(listItems)
   .post(authenticateUser, upload.single("photo"), postItem);
 
 // get a single item, update an item, delete an item
@@ -22,5 +23,7 @@ router
   .get(authenticateUser, singleItem)
   .patch(authenticateUser, upload.single("photo"), updateItem)
   .delete(authenticateUser, deleteItem);
+
+router.route("/user/items").get(authenticateUser, getUserItems);
 
 module.exports = router;
