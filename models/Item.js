@@ -7,6 +7,10 @@ const itemSchema = new Schema({
     ref: "User",
     required: true,
   },
+  itemName: {
+    type: String,
+    required: true,
+  },
   description: {
     type: String,
     required: true,

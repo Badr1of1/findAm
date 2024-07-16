@@ -2,7 +2,7 @@ const Item = require("../models/Item");
 const fs = require("fs");
 
 const postItem = async (req, res) => {
-  const { description, location, contactInfo, status } = req.body;
+  const {itemName, description, location, contactInfo, status } = req.body;
 
   if (!req.file) {
     return res.status(400).json({ message: "No file uploaded" });
@@ -11,6 +11,7 @@ const postItem = async (req, res) => {
   try {
     const newItem = await Item.create({
       user: req.user._id,
+      itemName,
       description,
       location,
       contactInfo,
@@ -27,8 +28,9 @@ const postItem = async (req, res) => {
 
 const updateItem = async (req, res) => {
   const { id: itemID } = req.params;
-  const { description, location, contactInfo, status } = req.body;
+  const {itemName, description, location, contactInfo, status } = req.body;
   let updateFields = {
+    itemName,
     description,
     location,
     contactInfo,
@@ -93,8 +95,12 @@ const listItems = async (req, res) => {
 
 const getUserItems = async (req, res) => {
   try {
-    const items = await Item.find({ user: req.user.username });
-    res.status(200).json({ items });
+    const items = await Item.find({ user: req.user._id });
+    const itemsWithUrls = items.map(item => ({
+      ...item._doc,
+      photoUrl: `${req.protocol}://${req.get('host')}/${item.photo}`
+    }));
+    res.status(200).json({ items: itemsWithUrls, nbHits: items.length });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to retrieve user items. Please try again.' });
