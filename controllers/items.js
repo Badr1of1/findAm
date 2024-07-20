@@ -1,14 +1,24 @@
+const aws = require("aws-sdk");
 const Item = require("../models/Item");
 const fs = require("fs");
+require('dotenv').config()
+
+const s3 = new aws.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+});
 
 const postItem = async (req, res) => {
   const {itemName, description, location, contactInfo, status } = req.body;
 
-  if (!req.file) {
+  if (!req.files || req.files.length === 0) {
     return res.status(400).json({ message: "No file uploaded" });
   }
 
   try {
+    const itemPictures = req.files.map(file => ({img: file.location}))
+
     const newItem = await Item.create({
       user: req.user._id,
       itemName,
@@ -16,7 +26,7 @@ const postItem = async (req, res) => {
       location,
       contactInfo,
       status,
-      photo: req.file.path,
+      itemPictures,
     });
 
     res.status(201).json(newItem);
@@ -38,8 +48,9 @@ const updateItem = async (req, res) => {
     updatedAt: Date.now(),
   };
 
-  if (req.file) {
-    updateFields.photo = req.file.path;
+  if (req.files && req.files.length > 0) {
+    const itemPictures = req.files.map(file => ({img: file.location}))
+    updateFields.itemPictures = itemPictures;
   }
 
   try {
@@ -54,9 +65,9 @@ const updateItem = async (req, res) => {
 
     res.status(200).json({ item });
   } catch (error) {
-    if (req.file) {
-      fs.unlinkSync(req.file.path);
-    }
+    // if (req.file) {
+    //   fs.unlinkSync(req.file.path);
+    // }
     console.error(error);
     res.status(500).json({ error: "Failed to update item. Please try again." });
   }
@@ -72,7 +83,17 @@ const deleteItem = async (req, res) => {
       return res.status(404).json({ error: "Item not found" });
     }
 
-    fs.unlinkSync(item.photo);
+    // delete from s3
+    if(itemPictures && itemPictures.length > 0){
+      const deleteParams = {
+        Bucket:process.env.S3_BUCKET_NAME,
+        Delete:{
+          Objects: item.itemPictures.map(picture => ({key:picture.img.split('/').pop()})),
+          Quiet: false,
+        }
+      }
+      await s3.deleteObjects(deleteParams).promise()
+    }
     res.status(200).json({ message: "Item deleted successfully" });
   } catch (error) {
     console.error(error);
