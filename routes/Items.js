@@ -15,7 +15,7 @@ const { authenticateUser } = require("../middlewares/auth");
 router
   .route("/items")
   .get(listItems)
-  .post(authenticateUser, upload.single("photo"), postItem);
+  .post(authenticateUser, upload.array("files", 10), postItem);
 
 // get a single item, update an item, delete an item
 router
