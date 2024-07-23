@@ -22,6 +22,6 @@ const upload = multer({
       cb(null, `${Date.now().toString()}-${path.basename(file.originalname)}`);
     },
   }),
-}).array('itemPictures', 10);
+});
 
 module.exports = upload;
