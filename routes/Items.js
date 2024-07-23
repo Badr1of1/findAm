@@ -21,7 +21,7 @@ router
 router
   .route("/items/:id")
   .get(authenticateUser, singleItem)
-  .patch(authenticateUser, upload.single("photo"), updateItem)
+  .patch(authenticateUser, upload.array("files", 10), updateItem)
   .delete(authenticateUser, deleteItem);
 
 router.route("/user/items").get(authenticateUser, getUserItems);

@@ -88,7 +88,7 @@ const deleteItem = async (req, res) => {
       const deleteParams = {
         Bucket:process.env.S3_BUCKET_NAME,
         Delete:{
-          Objects: item.itemPictures.map(picture => ({key:picture.img.split('/').pop()})),
+          Objects: item.itemPictures.map(picture => ({Key:picture.img.split('/').pop()})),
           Quiet: false,
         }
       }
