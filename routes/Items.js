@@ -15,13 +15,13 @@ const { authenticateUser } = require("../middlewares/auth");
 router
   .route("/items")
   .get(listItems)
-  .post(authenticateUser, upload.array("files", 10), postItem);
+  .post(authenticateUser, upload.array("itemPictures", 10), postItem);
 
 // get a single item, update an item, delete an item
 router
   .route("/items/:id")
   .get(authenticateUser, singleItem)
-  .patch(authenticateUser, upload.array("files", 10), updateItem)
+  .patch(authenticateUser, upload.array("itemPictures", 10), updateItem)
   .delete(authenticateUser, deleteItem);
 
 router.route("/user/items").get(authenticateUser, getUserItems);
