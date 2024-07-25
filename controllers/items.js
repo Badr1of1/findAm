@@ -7,14 +7,14 @@ const postItem = async (req, res) => {
   const { itemName, description, location, contactInfo, status } = req.body;
 
   if (!req.files || req.files.length === 0) {
-    return res.status(400).json({ message: 'No file uploaded' });
+    return res.status(400).json({ message: "No file uploaded" });
   }
 
   try {
     const itemPictures = await Promise.all(
       req.files.map(async (file) => {
         const fileUrl = await uploadToS3(file);
-        return { img: fileUrl };
+        return fileUrl; // Return the URL directly
       })
     );
 
@@ -31,7 +31,7 @@ const postItem = async (req, res) => {
     res.status(201).json(newItem);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: `Failed to create item: ${error.message}` });
+    res.status(500).json({ error: `Failed to create item ${error.message}` });
   }
 };
 

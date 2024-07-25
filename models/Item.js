@@ -15,8 +15,8 @@ const itemSchema = new Schema({
     type: String,
     required: true,
   },
-  photo: {
-    type: String,
+  itemPictures: {
+    type: [String],
     required: true,
   },
   location: {

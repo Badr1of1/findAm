@@ -1,36 +1,14 @@
-// const aws = require("aws-sdk");
-// const multer = require("multer");
-// const multerS3 = require("multer-s3");
-// const path = require("path");
-// require('dotenv').config();
-
-// const s3 = new aws.S3({
-//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-//   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-//   region: process.env.AWS_REGION,
-// });
-
-// const upload = multer({
-//   storage: multerS3({
-//     s3: s3,
-//     bucket: process.env.S3_BUCKET_NAME,
-//     acl: 'public-read',
-//     metadata: function (req, file, cb) {
-//       cb(null, { fieldName: file.fieldname });
-//     },
-//     key: function (req, file, cb) {
-//       cb(null, `${Date.now().toString()}-${path.basename(file.originalname)}`);
-//     },
-//   }),
-// });
-
-// module.exports = upload;
-
-const aws = require("@aws-sdk/client-s3");
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { v4: uuidv4 } = require("uuid");
+const sharp = require("sharp");
 const multer = require("multer");
 require("dotenv").config();
 
-const s3 = new aws.S3Client({
+const upload = multer({
+  storage: multer.memoryStorage(),
+});
+
+const s3 = new S3Client({
   region: process.env.AWS_REGION,
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -38,26 +16,27 @@ const s3 = new aws.S3Client({
   },
 });
 
-const upload = multer({ storage: multer.memoryStorage() });
-
 const uploadToS3 = async (file) => {
+  const key = `${uuidv4()}-${file.originalname}`;
+
+  const buffer = await sharp(file.buffer).toBuffer();
+
+  console.log("Bucket:", process.env.AWS_BUCKET_NAME); // Debug line
+
   const params = {
-    Bucket: process.envS3_BUCKET_NAME,
-    Key: `${Date.now().toString()}-${file.originalname}`,
-    Body: file.buffer,
-    ACL: "public-read",
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Key: key,
+    Body: buffer,
     ContentType: file.mimetype,
   };
 
-  const command = new aws.PutObjectCommand(params);
-
   try {
-    await s3.send(command);
-    return `https://${params.Bucket}.s3.amazonaws.com/${params.Key}`;
-  } catch (error) {
-    console.error(error);
-    throw new Error("Error uploading file to S3");
+    const data = await s3.send(new PutObjectCommand(params));
+    return `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to upload file to S3");
   }
 };
 
-module.exports = {upload, uploadToS3}
+module.exports = { upload, uploadToS3 };
