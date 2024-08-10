@@ -21,8 +21,6 @@ const uploadToS3 = async (file) => {
 
   const buffer = await sharp(file.buffer).toBuffer();
 
-  console.log("Bucket:", process.env.AWS_BUCKET_NAME); // Debug line
-
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: key,
@@ -38,5 +36,11 @@ const uploadToS3 = async (file) => {
     throw new Error("Failed to upload file to S3");
   }
 };
+
+// const getFromS3 = async (file) => { 
+//   const params = {
+//     Bucket = process.env.AWS_BUCKET_NAME
+//   }
+//  }
 
 module.exports = { upload, uploadToS3 };

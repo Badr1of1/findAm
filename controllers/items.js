@@ -1,6 +1,7 @@
 const Item = require("../models/Item");
 const fs = require("fs");
 const { uploadToS3 } = require("../middlewares/upload");
+const { GetObjectCommand } = require("@aws-sdk/client-s3");
 require("dotenv").config();
 
 const postItem = async (req, res) => {
@@ -102,20 +103,28 @@ const deleteItem = async (req, res) => {
   }
 };
 
-const listItems = async (req, res) => {
-  try {
-    const items = await Item.find({});
-    const itemsWithUrls = items.map((item) => ({
-      ...item._doc,
-      photoUrl: `${req.protocol}://${req.get("host")}/${item.photo}`,
-    }));
-    res.status(200).json({ items: itemsWithUrls, nbHits: items.length });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Failed to retrieve items. Please try again." });
+// const listItems = async (req, res) => {
+//   try {
+//     const items = await Item.find({});
+//     const itemsWithUrls = items.map((item) => ({
+//       ...item._doc,
+//       photoUrl: item.photo, // assuming `item.photo` contains the S3 URL
+//     }));
+//     res.status(200).json({ items: itemsWithUrls, nbHits: items.length });
+//   } catch (error) {
+//     res.status(500).json({ error: "Failed to retrieve items. Please try again." });
+//   }
+// };
+ const listItems = async (req, res) => { 
+    const items = await Item.find({})
+    for(item of items){
+      const getObjectParams = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: item.itemPictures
+      }
+      const command = new GetObjectCommand(getObjectParams)
+    }
   }
-};
 
 const getUserItems = async (req, res) => {
   try {
