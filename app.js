@@ -14,7 +14,9 @@ app.use(cors());
 app.use("/uploads", express.static("uploads"));
 app.use(express.static("./public"));
 app.use(express.json());
-app.use("/api/v1", itemRoute, userRoute, commentRoute);
+app.use("/api/v1", userRoute)
+app.use("/api/v1", commentRoute)
+app.use("/api/v1", itemRoute);
 
 // app.use(errHandlerMw);
 app.use(notFoundMw);
